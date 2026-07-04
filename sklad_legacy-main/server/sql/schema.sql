@@ -1,0 +1,83 @@
+-- MySQL schema for warehouse manager
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(64) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NULL,
+  name VARCHAR(128) NOT NULL,
+  email VARCHAR(128) NOT NULL,
+  department VARCHAR(128) DEFAULT NULL,
+  position VARCHAR(128) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(32) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS permissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(32) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS user_roles (
+  user_id INT NOT NULL,
+  role_id INT NOT NULL,
+  PRIMARY KEY(user_id, role_id),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+  role_id INT NOT NULL,
+  permission_id INT NOT NULL,
+  PRIMARY KEY(role_id, permission_id),
+  FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE,
+  FOREIGN KEY(permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(128) NOT NULL,
+  description TEXT,
+  icon VARCHAR(64) DEFAULT 'fas fa-tag',
+  color VARCHAR(16) DEFAULT '#2c5aa0',
+  active TINYINT(1) DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  category_id INT NULL,
+  price DECIMAL(12,2) NOT NULL DEFAULT 0,
+  quantity INT NOT NULL DEFAULT 0,
+  description TEXT,
+  barcode VARCHAR(128),
+  min_quantity INT NOT NULL DEFAULT 0,
+  location VARCHAR(255),
+  supplier VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS operations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  type ENUM('incoming','outgoing') NOT NULL,
+  item_id INT NOT NULL,
+  quantity INT NOT NULL,
+  employee_id INT NOT NULL,
+  status ENUM('completed','pending','cancelled') DEFAULT 'completed',
+  notes TEXT,
+  supplier VARCHAR(255),
+  recipient VARCHAR(255),
+  date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(item_id) REFERENCES items(id) ON DELETE CASCADE,
+  FOREIGN KEY(employee_id) REFERENCES users(id) ON DELETE RESTRICT
+);
+
+

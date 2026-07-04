@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Email - Склад-Менеджер</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Главная навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <i class="fas fa-warehouse me-2 text-primary"></i>
+                <span class="fw-bold">Склад-Менеджер</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">
+                            <i class="fas fa-home me-1"></i>Главная
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" id="adminDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>Администрирование
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="users.html">Управление пользователями</a></li>
+                            <li><a class="dropdown-item" href="categories.html">Категории позиций</a></li>
+                            <li><a class="dropdown-item" href="reports.html">Отчеты</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item active" href="email-test.html">Тест Email</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" id="profileDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Профиль
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="../profile.html">Мой профиль</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">Выйти</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-envelope me-2"></i>Тест Email-уведомлений</h1>
+                    <a href="reports.html" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Назад к отчетам
+                    </a>
+                </div>
+
+                <!-- Статус email-сервиса -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Статус Email-сервиса
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="emailStatus" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                            <p class="mt-2">Проверка статуса...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Тестовая отправка email -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Тестовая отправка Email
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="testEmailForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="testEmail" class="form-label">Email получателя</label>
+                                    <input type="email" class="form-control" id="testEmail" required 
+                                           placeholder="test@example.com">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="testSubject" class="form-label">Тема письма</label>
+                                    <input type="text" class="form-control" id="testSubject" required 
+                                           placeholder="Тестовое уведомление">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="testMessage" class="form-label">Сообщение</label>
+                                <textarea class="form-control" id="testMessage" rows="4" required 
+                                          placeholder="Введите текст сообщения..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i>Отправить тестовое письмо
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Быстрые тесты -->
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                                    Тест низкого остатка
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Отправить уведомление о товарах с низким запасом</p>
+                                <button class="btn btn-warning btn-sm" onclick="testLowStockAlert()">
+                                    <i class="fas fa-paper-plane me-1"></i>Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-box me-2 text-success"></i>
+                                    Тест операции
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Отправить уведомление об операции на складе</p>
+                                <button class="btn btn-success btn-sm" onclick="testOperationNotification()">
+                                    <i class="fas fa-paper-plane me-1"></i>Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-chart-bar me-2 text-info"></i>
+                                    Тест отчета
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">Отправить еженедельный отчет по операциям</p>
+                                <button class="btn btn-info btn-sm" onclick="testWeeklyReport()">
+                                    <i class="fas fa-paper-plane me-1"></i>Отправить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Лог отправки -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Лог отправки
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="emailLog" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+                            <p class="text-muted mb-0">Лог отправки email-уведомлений будет отображаться здесь...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Система управления складом</h5>
+                    <p class="mb-0">Эффективное управление товарными запасами</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2025 Склад-Менеджер. Все права защищены.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/warehouse.js"></script>
+    <script>
+        // Инициализация
+        $(document).ready(async () => {
+            try {
+                // Проверяем авторизацию
+                if (!auth.isUserAuthenticated()) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+
+                // Проверяем права администратора
+                if (!auth.hasRole('admin')) {
+                    auth.showNotification('Недостаточно прав для доступа к этой странице', 'danger');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // Обновляем информацию о пользователе
+                updateUserInfo();
+                
+                // Загружаем статус email-сервиса
+                await loadEmailStatus();
+                
+                // Привязываем события
+                bindEvents();
+                
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                auth.showNotification('Ошибка загрузки данных', 'danger');
+            }
+        });
+
+        // Обновление информации о пользователе
+        function updateUserInfo() {
+            const user = auth.getCurrentUser();
+            if (user) {
+                const profileToggle = $('#profileDropdown .dropdown-toggle');
+                if (profileToggle.length) {
+                    profileToggle.html(`<i class="fas fa-user me-1"></i>${user.name}`);
+                }
+                $('#profileDropdown').show();
+                $('#adminDropdown').show();
+            }
+        }
+
+        // Привязка событий
+        function bindEvents() {
+            // Обработчик формы тестового email
+            $('#testEmailForm').on('submit', async (e) => {
+                e.preventDefault();
+                await sendTestEmail();
+            });
+
+            // Обработчик выхода
+            $('#logoutBtn').on('click', (e) => {
+                e.preventDefault();
+                auth.logout();
+                window.location.href = '../login.html';
+            });
+        }
+
+        // Загрузка статуса email-сервиса
+        async function loadEmailStatus() {
+            try {
+                const warehouse = new WarehouseManager();
+                const status = await warehouse.apiRequest('/notifications/status');
+                
+                $('#emailStatus').html(`
+                    <div class="text-success">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <h5>Email-сервис активен</h5>
+                        <p class="mb-0">Последняя проверка: ${new Date().toLocaleString('ru-RU')}</p>
+                    </div>
+                `);
+            } catch (error) {
+                $('#emailStatus').html(`
+                    <div class="text-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <h5>Email-сервис недоступен</h5>
+                        <p class="mb-0">Ошибка: ${error.message}</p>
+                    </div>
+                `);
+            }
+        }
+
+        // Отправка тестового email
+        async function sendTestEmail() {
+            const email = $('#testEmail').val();
+            const subject = $('#testSubject').val();
+            const message = $('#testMessage').val();
+
+            if (!email || !subject || !message) {
+                auth.showNotification('Пожалуйста, заполните все поля', 'warning');
+                return;
+            }
+
+            try {
+                const warehouse = new WarehouseManager();
+                const result = await warehouse.sendTestEmail(email, subject, message);
+                
+                addToLog('success', `Тестовое письмо отправлено на ${email}`, result);
+                auth.showNotification('Тестовое письмо отправлено успешно', 'success');
+                
+                // Очищаем форму
+                $('#testEmailForm')[0].reset();
+                
+            } catch (error) {
+                addToLog('error', `Ошибка отправки тестового письма: ${error.message}`);
+                auth.showNotification('Ошибка отправки тестового письма', 'danger');
+            }
+        }
+
+        // Тест уведомления о низком остатке
+        async function testLowStockAlert() {
+            try {
+                const warehouse = new WarehouseManager();
+                const lowStockItems = await warehouse.getLowStockItems();
+                
+                if (lowStockItems.length === 0) {
+                    // Создаем тестовые данные
+                    const testItems = [
+                        { name: 'Тестовый товар 1', quantity: 2, minQuantity: 5 },
+                        { name: 'Тестовый товар 2', quantity: 1, minQuantity: 3 }
+                    ];
+                    
+                    const result = await warehouse.sendLowStockEmailNotification(testItems);
+                    addToLog('success', 'Тестовое уведомление о низком остатке отправлено', result);
+                    auth.showNotification('Тестовое уведомление о низком остатке отправлено', 'success');
+                } else {
+                    const result = await warehouse.sendLowStockEmailNotification(lowStockItems);
+                    addToLog('success', 'Уведомление о низком остатке отправлено', result);
+                    auth.showNotification('Уведомление о низком остатке отправлено', 'success');
+                }
+            } catch (error) {
+                addToLog('error', `Ошибка отправки уведомления о низком остатке: ${error.message}`);
+                auth.showNotification('Ошибка отправки уведомления', 'danger');
+            }
+        }
+
+        // Тест уведомления об операции
+        async function testOperationNotification() {
+            try {
+                const warehouse = new WarehouseManager();
+                const testOperation = {
+                    type: 'incoming',
+                    itemName: 'Тестовый товар',
+                    quantity: 10,
+                    date: new Date().toISOString(),
+                    employeeName: 'Тестовый сотрудник'
+                };
+                
+                const result = await warehouse.sendOperationEmailNotificationAPI(testOperation);
+                addToLog('success', 'Тестовое уведомление об операции отправлено', result);
+                auth.showNotification('Тестовое уведомление об операции отправлено', 'success');
+            } catch (error) {
+                addToLog('error', `Ошибка отправки уведомления об операции: ${error.message}`);
+                auth.showNotification('Ошибка отправки уведомления', 'danger');
+            }
+        }
+
+        // Тест еженедельного отчета
+        async function testWeeklyReport() {
+            try {
+                const warehouse = new WarehouseManager();
+                const testReport = {
+                    period: 'За последнюю неделю',
+                    totalOperations: 15,
+                    incoming: 8,
+                    outgoing: 7,
+                    operations: [
+                        { date: new Date().toISOString(), type: 'incoming', itemName: 'Товар 1', quantity: 5 },
+                        { date: new Date().toISOString(), type: 'outgoing', itemName: 'Товар 2', quantity: 3 }
+                    ]
+                };
+                
+                const result = await warehouse.sendWeeklyReportEmailNotification(testReport);
+                addToLog('success', 'Тестовый еженедельный отчет отправлен', result);
+                auth.showNotification('Тестовый еженедельный отчет отправлен', 'success');
+            } catch (error) {
+                addToLog('error', `Ошибка отправки еженедельного отчета: ${error.message}`);
+                auth.showNotification('Ошибка отправки отчета', 'danger');
+            }
+        }
+
+        // Добавление записи в лог
+        function addToLog(type, message, data = null) {
+            const log = $('#emailLog');
+            const timestamp = new Date().toLocaleString('ru-RU');
+            const icon = type === 'success' ? 'fas fa-check-circle text-success' : 'fas fa-exclamation-triangle text-danger';
+            
+            let logEntry = `
+                <div class="mb-2">
+                    <i class="${icon} me-2"></i>
+                    <strong>${timestamp}</strong> - ${message}
+                </div>
+            `;
+            
+            if (data) {
+                logEntry += `<pre class="small text-muted ms-4">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            log.append(logEntry);
+            log.scrollTop(log[0].scrollHeight);
+        }
+    </script>
+</body>
+</html>

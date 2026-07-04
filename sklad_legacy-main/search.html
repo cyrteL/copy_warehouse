@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск - Склад-Менеджер</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+
+    <!-- Главная навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-warehouse me-2 text-primary"></i>
+                <span class="fw-bold">Склад-Менеджер</span>
+            </a>
+            
+            <!-- Поиск в шапке -->
+            <div class="navbar-search me-auto ms-4">
+                <div class="input-group" style="width: 400px;">
+                    <input type="text" class="form-control" placeholder="Поиск позиций..." id="headerSearch">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Главная
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-boxes me-1"></i>Каталог
+                        </a>
+                        <ul class="dropdown-menu" id="catalogCategoriesDropdown">
+                            <li><a class="dropdown-item" href="catalog.html">Все позиции</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!-- Категории будут загружены динамически -->
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">
+                            <i class="fas fa-history me-1"></i>История
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" id="adminDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>Администрирование
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="admin/users.html">Управление пользователями</a></li>
+                            <li><a class="dropdown-item" href="admin/categories.html">Категории позиций</a></li>
+                            <li><a class="dropdown-item" href="admin/reports.html">Отчеты</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" id="profileDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Профиль
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="profile.html">Мой профиль</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">Выйти</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Панель категорий -->
+    <div class="categories-bar bg-light border-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="nav nav-pills categories-nav" id="categoriesNav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">
+                                <i class="fas fa-home me-1"></i>Главная
+                            </a>
+                        </li>
+                        <!-- Категории будут загружены динамически -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <main class="container mt-4">
+        <!-- Заголовок страницы -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="mb-1">
+                    <i class="fas fa-search me-2"></i>
+                    Поиск
+                </h1>
+                <p class="text-muted mb-0">Быстрый поиск товаров и операций</p>
+            </div>
+        </div>
+
+        <!-- Поисковая форма -->
+        <div class="search-container">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control search-input" id="searchQuery" placeholder="Введите название товара, описание, штрих-код или любые другие данные для поиска...">
+                        <button class="btn btn-primary" type="button" id="searchBtn">
+                            <i class="fas fa-search me-1"></i>Найти
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="searchType">
+                        <option value="all">Все</option>
+                        <option value="items">Только товары</option>
+                        <option value="operations">Только операции</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Расширенные фильтры -->
+            <div class="row mt-3" id="advancedFilters" style="display: none;">
+                <div class="col-md-3 mb-3">
+                    <label for="categoryFilter" class="form-label">Категория товара</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">Все категории</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="priceRange" class="form-label">Диапазон цен</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="minPrice" placeholder="От">
+                        <span class="input-group-text">-</span>
+                        <input type="number" class="form-control" id="maxPrice" placeholder="До">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="dateRange" class="form-label">Период</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="startDate">
+                        <span class="input-group-text">-</span>
+                        <input type="date" class="form-control" id="endDate">
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-grid">
+                        <button class="btn btn-outline-secondary" id="clearFiltersBtn">
+                            <i class="fas fa-times me-1"></i>Очистить
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка расширенных фильтров -->
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-link" id="toggleAdvancedFilters">
+                        <i class="fas fa-filter me-1"></i>Расширенные фильтры
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Результаты поиска -->
+        <div id="searchResults" style="display: none;">
+            <!-- Статистика результатов -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 id="resultsCount">Найдено результатов: 0</h5>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" id="sortResults" style="width: auto;">
+                                <option value="relevance">По релевантности</option>
+                                <option value="name">По названию</option>
+                                <option value="date">По дате</option>
+                                <option value="price">По цене</option>
+                            </select>
+                            <button class="btn btn-outline-primary btn-sm" id="exportResultsBtn">
+                                <i class="fas fa-download me-1"></i>Экспорт
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Переключатель вкладок -->
+            <ul class="nav nav-tabs mb-3" id="resultsTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="items-tab" data-bs-toggle="tab" href="#itemsResults">
+                                                    <i class="fas fa-boxes me-1"></i>Позиции <span class="badge bg-secondary" id="itemsCount">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="operations-tab" data-bs-toggle="tab" href="#operationsResults">
+                        <i class="fas fa-history me-1"></i>Операции <span class="badge bg-secondary" id="operationsCount">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Содержимое вкладок -->
+            <div class="tab-content" id="resultsTabContent">
+                <!-- Вкладка товаров -->
+                <div class="tab-pane fade show active" id="itemsResults">
+                    <div class="row" id="itemsResultsContainer">
+                        <!-- Результаты товаров будут загружены через JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Вкладка операций -->
+                <div class="tab-pane fade" id="operationsResults">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="operationsResultsTable">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Тип</th>
+                                    <th>Товар</th>
+                                    <th>Количество</th>
+                                    <th>Сотрудник</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Результаты операций будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Пагинация -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <nav aria-label="Навигация по результатам">
+                        <ul class="pagination justify-content-center" id="resultsPagination">
+                            <!-- Пагинация будет создана через JavaScript -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Пустое состояние -->
+        <div id="emptyState" class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                    <h4>Начните поиск</h4>
+                        <p class="text-muted">Введите запрос в поле поиска выше, чтобы найти позиции или операции</p>
+        </div>
+
+        <!-- Состояние загрузки -->
+        <div id="loadingState" class="text-center py-5" style="display: none;">
+            <div class="loading-spinner text-primary mb-3"></div>
+            <p class="text-muted">Поиск...</p>
+        </div>
+    </main>
+
+    <!-- Модальное окно деталей товара -->
+    <div class="modal fade" id="itemDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                                                <h5 class="modal-title">
+                                <i class="fas fa-box me-2"></i>
+                                Детали позиции
+                            </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="itemDetailsContent">
+                    <!-- Содержимое будет загружено через JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" id="editItemBtn">
+                        <i class="fas fa-edit me-1"></i>Редактировать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Система управления складом</h5>
+                    <p class="mb-0">Эффективное управление товарными запасами</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2025 Склад-Менеджер. Все права защищены.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/warehouse.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html> 

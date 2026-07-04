@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчеты - Склад-Менеджер</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../index.html"><i class="fas fa-warehouse me-2"></i>Склад-Менеджер</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html"><i class="fas fa-home me-1"></i>Главная</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-boxes me-1"></i>Каталог</a>
+                        <ul class="dropdown-menu" id="catalogCategoriesDropdown">
+                            <li><a class="dropdown-item" href="../catalog.html">Все позиции</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="../history.html"><i class="fas fa-history me-1"></i>История</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../search.html"><i class="fas fa-search me-1"></i>Поиск</a></li>
+                </ul>
+                <ul class="navbar-nav" id="adminDropdown" style="display: none;">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-cogs me-1"></i>Администрирование</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="categories.html"><i class="fas fa-tags me-2"></i>Категории позиций</a></li>
+                            <li><a class="dropdown-item" href="users.html"><i class="fas fa-users me-2"></i>Управление пользователями</a></li>
+                            <li><a class="dropdown-item active" href="reports.html"><i class="fas fa-chart-line me-2"></i>Отчеты</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="email-test.html"><i class="fas fa-envelope me-2"></i>Тест Email</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav" id="profileDropdown" style="display: none;">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-user me-1"></i>Профиль</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h1 class="h3 mb-0"><i class="fas fa-chart-line me-2 text-primary"></i>Отчеты</h1>
+                <div class="text-muted">Статистика, операции и остатки за выбранный период</div>
+            </div>
+            <div>
+                <button class="btn btn-outline-secondary me-2" id="resetFiltersBtn"><i class="fas fa-rotate-left me-2"></i>Сбросить</button>
+                <button class="btn btn-outline-secondary me-2" id="exportCsvBtn"><i class="fas fa-file-csv me-2"></i>Экспорт CSV</button>
+                <button class="btn btn-outline-secondary" id="exportJsonBtn"><i class="fas fa-file-code me-2"></i>Экспорт JSON</button>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="filtersForm" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Период от</label>
+                        <input type="date" class="form-control" id="dateFrom">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Период до</label>
+                        <input type="date" class="form-control" id="dateTo">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Тип операции</label>
+                        <select id="opType" class="form-select">
+                            <option value="">Все</option>
+                            <option value="incoming">Приход</option>
+                            <option value="outgoing">Расход</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Категория</label>
+                        <select id="categoryId" class="form-select">
+                            <option value="">Все</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Товар</label>
+                        <input type="text" id="itemQuery" class="form-control" placeholder="Название/штрихкод">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Сотрудник</label>
+                        <input type="text" id="employeeQuery" class="form-control" placeholder="Имя пользователя">
+                    </div>
+                    <div class="col-md-3 align-self-end">
+                        <button class="btn btn-primary w-100" id="applyFiltersBtn" type="submit"><i class="fas fa-sync me-2"></i>Применить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                <div class="card text-white bg-success"><div class="card-body"><div class="small">Приход всего</div><div class="h4 mb-0" id="totalIncoming">0</div></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger"><div class="card-body"><div class="small">Расход всего</div><div class="h4 mb-0" id="totalOutgoing">0</div></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary"><div class="card-body"><div class="small">Операций</div><div class="h4 mb-0" id="totalOps">0</div></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info"><div class="card-body"><div class="small">Уникальных товаров</div><div class="h4 mb-0" id="uniqueItems">0</div></div></div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header"><i class="fas fa-list me-2"></i>Операции</div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0" id="operationsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Товар</th>
+                            <th>Количество</th>
+                            <th>Сотрудник</th>
+                            <th>Категория</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header"><i class="fas fa-box me-2"></i>Остатки по категориям</div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0" id="byCategoryTable">
+                            <thead class="table-light"><tr><th>Категория</th><th>Всего позиций</th><th>Суммарный остаток</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header"><i class="fas fa-star me-2"></i>ТОП товаров по движению</div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0" id="topItemsTable">
+                            <thead class="table-light"><tr><th>Товар</th><th>Приход</th><th>Расход</th><th>Итого</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingState" class="text-center py-5" style="display:none;">
+            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Загрузка...</span></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/reports.js"></script>
+</body>
+</html>
